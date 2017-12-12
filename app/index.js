@@ -1,6 +1,7 @@
 const express = require('express');
 const config = require('./config');
 const { logger, LoggerStream } = require('./utils/logger');
+const Boom = require('boom');
 
 // Middlewares
 const morgan = require('morgan');
@@ -110,26 +111,29 @@ app.get('/', (req, res) => res.send('hello world!'));
 app.use((req, res, next) => {
     // With 404 status, don't pass the error to logger, render the error template instead
     // Then render the error template
-    return res.render('error', {
-        title: 'Error 404',
-        name: 'NotFound',
-        statusCode: 404,
-        message: 'Page Not Found.',
-    }, (renderErr, html) => {
-        if (renderErr) {
-            return next(renderErr);
-        }
+    // return res.render('error', {
+    //     title: 'Error 404',
+    //     name: 'NotFound',
+    //     statusCode: 404,
+    //     message: 'Page Not Found.',
+    // }, (renderErr, html) => {
+    //     if (renderErr) {
+    //         return next(renderErr);
+    //     }
 
-        return res.status(404).send(html);
-    });
+    //     return res.status(404).send(html);
+    // });
+    next(Boom.notFound('Page not found.'));
 });
 
 /**
  * App-level Request Errors Handler
  */
 app.use((err, req, res, next) => {
-    // First pass the error to logger
-    logger.error(`App Error Handler: ${err.stack}`);
+    if (err.isServer) {
+        // First pass the error to logger
+        logger.error(`App Error Handler: ${err.stack}`);
+    }
 
     if (!debug) {
         delete err.stack;
@@ -144,15 +148,12 @@ app.use((err, req, res, next) => {
     // If not, try to assign the statusCode
     if (res.statusCode < 400) {
         // Respect err
-        res.statusCode = err.statusCode || 500;
+        res.statusCode = err.output.statusCode;
     }
 
     // Then render the error template
     return res.render('error', {
-        title: 'Error ' + res.statusCode,
-        name: err.name,
-        statusCode: res.statusCode,
-        message: err.message,
+        ...err,
         stack: err.stack,
     }, (renderErr, html) => {
         if (renderErr) {

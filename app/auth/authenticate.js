@@ -1,5 +1,5 @@
 const passport = require('passport');
-const errors = require('./errors');
+const Boom = require('boom');
 
 const authenticates = {
     asUser: (req, res, next) => {
@@ -13,7 +13,7 @@ const authenticates = {
                 }
 
                 if (!user) {
-                    return next(new errors.UnauthorizedError('Access denied.'));
+                    return next(Boom.unauthorized('Access denied.'));
                 }
                 req.user = user;
                 req.authInfo = info;

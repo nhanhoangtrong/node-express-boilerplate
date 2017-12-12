@@ -1,7 +1,7 @@
 {{!< base }}
-<h1>{{name}}</h1>
-<h2>{{statusCode}}</h2>
-<p>{{message}}</p>
+<h1>{{output.payload.error}}</h1>
+<h2>{{output.payload.statusCode}}</h2>
+<p>{{output.payload.message}}</p>
 {{#if stack}}
 <pre>
     {{stack}}

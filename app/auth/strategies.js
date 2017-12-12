@@ -1,6 +1,6 @@
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
-const errors = require('./errors');
+const Boom = require('boom');
 
 const tester = (function () {
     const obj = Object.create(null);
@@ -24,7 +24,7 @@ const strategies = {
 
             return done(null, false);
         } catch (err) {
-            return done(err);
+            return done(Boom.internal('Bcrypt comparing error.', err));
         }
     }),
     serializeUser(user, done) {
@@ -34,7 +34,7 @@ const strategies = {
         if (userId === tester.id) {
             done(null, tester);
         } else {
-            done(new errors.DeserializeError('User not found.'));
+            done(Boom.badRequest('User not found.'));
         }
     },
 };
