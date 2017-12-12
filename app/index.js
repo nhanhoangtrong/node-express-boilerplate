@@ -10,6 +10,9 @@ const bodyParser = require('body-parser');
 const flash = require('express-flash');
 const lusca = require('lusca');
 
+// Authentication
+const passport = require('./auth/passport');
+
 // Redis and connections
 const RedisStore = require('connect-redis')(session);
 const redisClient = require('./redis');
@@ -61,7 +64,16 @@ app.use(session({
 }));
 app.use(cookieParser(config.get('app:cookies_secret')));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(flash());
+
+/**
+ * Authentication with Passport
+ */
+// Custom Passport initialize function
+app.use(passport.init());
+// Initialize Passport's middlewares in Express
+app.use(passport.session());
 
 /**
  * Security middlewares
