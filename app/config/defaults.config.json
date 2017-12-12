@@ -17,9 +17,7 @@
         ]
     },
     "redis": {
-        "host": "127.0.0.1",
-        "port": 6379,
-        "database": 0
+        "url": "redis://localhost:6379/0"
     },
     "app": {
         "trust_proxy": 1,

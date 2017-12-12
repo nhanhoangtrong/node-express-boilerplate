@@ -66,7 +66,6 @@
         },
         "redis": {
             "type": "object",
-            "required": ["host", "port"],
             "properties": {
                 "host": {
                     "type": "string",
@@ -75,10 +74,19 @@
                 "port": {
                     "type": "number"
                 },
-                "database": {
+                "db": {
                     "type": "integer",
                     "minimum": 0
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri"
                 }
+            },
+            "dependencies": {
+                "host": ["port", "db"],
+                "port": ["host", "db"],
+                "db": ["host", "port"]
             }
         },
         "app": {
