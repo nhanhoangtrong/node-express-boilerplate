@@ -1,0 +1,35 @@
+{
+    "name": "Node ExpressJS Boilerplate",
+    "debug": true,
+    "url": "http://localhost:4000/",
+    "server": {
+        "host": "127.0.0.1",
+        "port": 4000
+    },
+    "logger": {
+        "level": "debug",
+        "format": "dev",
+        "transports": [
+            {
+                "type": "console",
+                "level": "debug"
+            }
+        ]
+    },
+    "redis": {
+        "host": "127.0.0.1",
+        "port": 6379,
+        "database": 0
+    },
+    "app": {
+        "trust_proxy": 1,
+        "uploadsDir": "uploads/",
+        "staticDir": "static/",
+        "session_name": "session_id",
+        "cookies_secret": "The cookie secrets",
+        "routes": {
+            "static": "/static",
+            "uploads": "/uploads"
+        }
+    }
+}

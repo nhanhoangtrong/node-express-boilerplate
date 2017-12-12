@@ -1,0 +1,39 @@
+{
+  "name": "node-express-boilerplate",
+  "version": "0.1.0",
+  "description": "A ExpressJS and Node v8 boilerplate for fast web development.",
+  "main": "index.js",
+  "repository": "git@github.com:nhanhoangtrong/node-express-boilerplate.git",
+  "author": "Nhan Hoang <siege250294@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js --ext \"js json\" --watch . --verbose",
+    "test": "jest --forceExit",
+    "lint": "eslint .",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "ajv": "^5.5.1",
+    "body-parser": "^1.18.2",
+    "connect-redis": "^3.3.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.2",
+    "express-flash": "^0.0.2",
+    "express-hbs": "^1.0.4",
+    "express-session": "^1.15.6",
+    "lusca": "^1.5.2",
+    "morgan": "^1.9.0",
+    "multer": "^1.3.0",
+    "nconf": "^0.9.1",
+    "redis": "^2.8.0",
+    "winston": "^3.0.0-rc1"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.0",
+    "jest": "^21.2.1",
+    "nodemon": "^1.12.5",
+    "supertest": "^3.0.0"
+  }
+}

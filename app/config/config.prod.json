@@ -1,0 +1,23 @@
+{
+    "debug": false,
+    "url": "http://localhost:3001/",
+    "server": {
+        "host": "127.0.0.1",
+        "port": 3001
+    },
+    "logger": {
+        "level": "info",
+        "format": "combined",
+        "transports": [
+            {
+                "type": "console",
+                "level": "info"
+            },
+            {
+                "type": "file",
+                "level": "error",
+                "filename": "errors-[timestamp].log"
+            }
+        ]
+    }
+}

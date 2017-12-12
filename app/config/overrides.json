@@ -1,0 +1,10 @@
+{
+    "app": {
+        "views": {
+            "engine": "hbs",
+            "viewsDir": "views/",
+            "layoutsDir": "views/layouts/",
+            "partialsDir": "views/partials/"
+        }
+    }
+}
