@@ -85,6 +85,10 @@ app.use(lusca.xframe('SAMEORIGIN'));
 // Enabling X-XSS-Protection headers to help prevent
 // cross site scripting (XSS) attacks in older IE browsers (IE8)
 app.use(lusca.xssProtection(true));
+// keep clients from sniffing the MIME type
+app.use(lusca.nosniff());
+// disable x-powered-by header
+app.disable('x-powered-by');
 
 /**
  * Static middlewares config
