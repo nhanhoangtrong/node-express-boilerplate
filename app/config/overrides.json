@@ -5,6 +5,15 @@
             "viewsDir": "views/",
             "layoutsDir": "views/layouts/",
             "partialsDir": "views/partials/"
+        },
+        "trust_proxy": 1,
+        "uploadsDir": "uploads/",
+        "staticDir": "static/",
+        "session_name": "session_id",
+        "cookies_secret": "The cookie secrets",
+        "routes": {
+            "static": "/static",
+            "uploads": "/uploads"
         }
     }
 }

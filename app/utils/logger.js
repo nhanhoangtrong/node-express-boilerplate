@@ -1,6 +1,6 @@
 const { createLogger, transports, format } = require('winston');
 const config = require('../config');
-const { combine, timestamp, label, prettyPrint, printf, splat } = format;
+const { combine, timestamp, label, prettyPrint, simple, splat } = format;
 
 const loggerTransports = config.get('logger:transports').map(({ type, level, filename }) => {
     if (type === 'file') {
@@ -28,8 +28,8 @@ const loggerFormats = {
     ),
     dev: combine(
         splat(),
-        printf((info) => `[${info.level}] - ${info.message}`)
-    )
+        simple()
+    ),
 };
 
 const logger = createLogger({

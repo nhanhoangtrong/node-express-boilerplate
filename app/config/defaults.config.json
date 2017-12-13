@@ -18,16 +18,5 @@
     },
     "redis": {
         "url": "redis://localhost:6379/0"
-    },
-    "app": {
-        "trust_proxy": 1,
-        "uploadsDir": "uploads/",
-        "staticDir": "static/",
-        "session_name": "session_id",
-        "cookies_secret": "The cookie secrets",
-        "routes": {
-            "static": "/static",
-            "uploads": "/uploads"
-        }
     }
 }

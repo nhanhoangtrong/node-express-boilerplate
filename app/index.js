@@ -109,32 +109,28 @@ app.get('/', (req, res) => res.send('hello world!'));
  * 404 - Not Found Handler
  */
 app.use((req, res, next) => {
-    // With 404 status, don't pass the error to logger, render the error template instead
-    // Then render the error template
-    // return res.render('error', {
-    //     title: 'Error 404',
-    //     name: 'NotFound',
-    //     statusCode: 404,
-    //     message: 'Page Not Found.',
-    // }, (renderErr, html) => {
-    //     if (renderErr) {
-    //         return next(renderErr);
-    //     }
-
-    //     return res.status(404).send(html);
-    // });
+    // Boomify 404 status and send to errors handler
     next(Boom.notFound('Page not found.'));
 });
 
 /**
  * App-level Request Errors Handler
  */
-app.use((err, req, res, next) => {
-    if (err.isServer) {
-        // First pass the error to logger
-        logger.error(`App Error Handler: ${err.stack}`);
+app.use ((err, req, res, next) => {
+    // Check if an error is bomified or not,
+    // if not, throw an bad implementation to next handler
+    if (!err.isBoom) {
+        return next(Boom.badImplementation(err));
     }
 
+    return next(err);
+});
+app.use((err, req, res, next) => {
+    // Check if current mode is debug, or error is come from server
+    //  then logging the error stacktraces
+    if (debug || err.isServer) {
+        logger.error(err.stack);
+    }
     if (!debug) {
         delete err.stack;
     }
@@ -151,7 +147,7 @@ app.use((err, req, res, next) => {
         res.statusCode = err.output.statusCode;
     }
 
-    // Then render the error template
+    // Then render the error template and send back to client
     return res.render('error', {
         ...err,
         stack: err.stack,
