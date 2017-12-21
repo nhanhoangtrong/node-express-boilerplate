@@ -55,7 +55,7 @@ app.set('staticDir', serverConfig.staticDir);
  */
 app.use(
     morgan(config.get('logger:format'), {
-        stream: new LoggerStream({
+        stream: new LoggerStream('info', {
             from: 'express_morgan',
         }),
     })

@@ -53,11 +53,12 @@ const logger = createLogger({
 });
 
 exports.logger = logger;
-exports.LoggerStream = class InfoLoggerStream {
-    constructor(params) {
-        this.params = params;
+exports.LoggerStream = class LoggerStream {
+    constructor(level, meta) {
+        this.level = level;
+        this.meta = meta;
     }
     write(data) {
-        logger.info(data.replace('\n', ''), this.params);
+        logger.log(this.level, data.replace('\n', ''), this.meta);
     }
 };
