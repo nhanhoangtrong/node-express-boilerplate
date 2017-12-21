@@ -1,0 +1,34 @@
+{
+    "required": ["redis"],
+    "properties": {
+        "debug": {
+            "type": "boolean",
+            "default": false
+        },
+        "redis": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "format": "ipv4"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "db": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "url": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            },
+            "dependencies": {
+                "host": ["port", "db"],
+                "port": ["host", "db"],
+                "db": ["host", "port"]
+            }
+        }
+    }
+}

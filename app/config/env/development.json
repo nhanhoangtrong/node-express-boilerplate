@@ -1,10 +1,9 @@
 {
-    "name": "Node ExpressJS Boilerplate",
-    "debug": true,
-    "url": "http://localhost:4000/",
     "server": {
+        "debug": true,
+        "url": "http://localhost:3000/",
         "host": "127.0.0.1",
-        "port": 4000
+        "port": 3000
     },
     "logger": {
         "level": "debug",
@@ -16,7 +15,7 @@
             }
         ]
     },
-    "redis": {
-        "url": "redis://localhost:6379/0"
+    "db": {
+        "debug": false
     }
 }

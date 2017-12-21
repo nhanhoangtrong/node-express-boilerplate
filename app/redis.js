@@ -2,18 +2,20 @@ const redis = require('redis');
 const config = require('./config');
 const { logger } = require('./utils/logger');
 
-const redisConfig = config.get('redis');
+const dbConfig = config.get('db');
+const loggerParam = {
+    from: 'redis_connection',
+};
 
-redis.debug_mode = config.get('debug');
+redis.debug_mode = dbConfig.debug;
 
-const redisClient = redis.createClient(redisConfig);
+const redisClient = redis.createClient(dbConfig.redis);
 
 redisClient.on('ready', () => {
-    logger.info('Redis: Connection ready.');
+    logger.info('Connection ready.', loggerParam);
 });
 redisClient.on('error', (err) => {
-    logger.error('Redis: Errors occurred');
-    logger.error(`Redis: ${err.stack}`);
+    logger.error(err.stack, loggerParam);
 });
 
 module.exports = redisClient;

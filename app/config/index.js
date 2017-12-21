@@ -1,11 +1,8 @@
 const Nconf = require('nconf');
 const { existsSync } = require('fs');
 const { join } = require('path');
-const Ajv = require('ajv');
+const validators = require('./validators');
 const _private = {};
-
-// Validating config schema using Ajv
-_private.validator = new Ajv().compile(require('./configSchema.json'));
 
 /**
  * Load Nconf config
@@ -17,6 +14,7 @@ _private.validator = new Ajv().compile(require('./configSchema.json'));
 _private.loadNconf = function(options = {}) {
     const nconf = new Nconf.Provider();
     const defaultsDir = options.defaultsDir || __dirname;
+    const envDir = options.envDir || join(__dirname, 'env');
     const customsDir = options.customsDir || process.cwd();
 
     nconf.file('overrides', join(defaultsDir, 'overrides.json'));
@@ -30,30 +28,24 @@ _private.loadNconf = function(options = {}) {
     }
 
     // Load the defaults config include env config
-    nconf.file(
-        'defaults-env',
-        join(
-            defaultsDir,
-            `config.${
-                process.env.NODE_ENV !== 'production' ? 'dev' : 'prod'
-            }.json`
-        )
-    );
-    nconf.file('defaults', join(defaultsDir, 'defaults.config.json'));
+    nconf.file('defaults-env', join(envDir, `${process.env.NODE_ENV}.json`));
+    nconf.file('defaults', join(defaultsDir, 'defaults.json'));
 
     // Validating the loaded config, if not valid then throw the errors
-    if (!this.validator(nconf.get())) {
-        throw new Error(
-            `Validating config errors: ${JSON.stringify(
-                this.validator.errors,
-                null,
-                2
-            )}`
-        );
-    }
+    Object.keys(validators).forEach((ns) => {
+        if (!validators[ns](nconf.get(ns))) {
+            throw new Error(
+                `Validating config "${ns}" errors: ${JSON.stringify(
+                    validators[ns].errors,
+                    null,
+                    2
+                )}`
+            );
+        }
+    });
 
     return nconf;
 };
 
+module.exports = exports = _private.loadNconf();
 exports.loadNconf = _private.loadNconf;
-module.exports = _private.loadNconf();

@@ -1,5 +1,5 @@
 {
-    "app": {
+    "server": {
         "views": {
             "engine": "hbs",
             "viewsDir": "views/",

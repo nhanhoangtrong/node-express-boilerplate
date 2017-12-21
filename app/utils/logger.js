@@ -45,15 +45,19 @@ function generateTransports(arr = []) {
     });
 }
 
+const loggerConfig = config.get('logger');
 const logger = createLogger({
-    format: generateFormatters(config.get('logger:format')),
-    level: config.get('logger:level'),
-    transports: generateTransports(config.get('logger:transports')),
+    format: generateFormatters(loggerConfig.format),
+    level: loggerConfig.level,
+    transports: generateTransports(loggerConfig.transports),
 });
 
 exports.logger = logger;
 exports.LoggerStream = class InfoLoggerStream {
+    constructor(params) {
+        this.params = params;
+    }
     write(data) {
-        logger.info(data.replace('\n', ''));
+        logger.info(data.replace('\n', ''), this.params);
     }
 };

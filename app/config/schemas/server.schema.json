@@ -1,0 +1,81 @@
+{
+    "type": "object",
+    "required": ["staticDir", "uploadsDir", "routes"],
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "host": {
+            "type": "string",
+            "format": "ipv4"
+        },
+        "port": {
+            "type": "integer",
+            "minimum": 1
+        },
+        "trust_proxy": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "staticDir": {
+            "type": "string"
+        },
+        "uploadsDir": {
+            "type": "string"
+        },
+        "views": {
+            "type": "object",
+            "required": ["engine", "viewsDir", "layoutsDir", "partialsDir"],
+            "properties": {
+                "engine": {
+                    "type": "string",
+                    "const": "hbs"
+                }
+            },
+            "patternProperties": {
+                "(viewsDir|layoutsDir|partialsDir)": {
+                    "type": "string",
+                    "pattern": ".+/$"
+                }
+            }
+        },
+        "routes": {
+            "type": "object",
+            "properties": {
+                "static": {
+                    "type": "string",
+                    "pattern": "^/[:a-z]+"
+                },
+                "uploads": {
+                    "type": "string",
+                    "pattern": "^/[:a-z]+"
+                }
+            }
+        },
+        "i18n": {
+            "type": "object",
+            "properties": {
+                "dir": {
+                    "type": "string"
+                },
+                "locales": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "cookie": {
+                    "type": "string"
+                }
+            }
+        },
+        "paths": {
+            "type": "object",
+            "patternProperties": {
+                "[a-z-:]+": {
+                    "type": ["object", "string"]
+                }
+            }
+        }
+    }
+}

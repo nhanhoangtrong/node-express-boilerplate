@@ -24,53 +24,54 @@ const { registerHelpers } = require('./hbs/helpers');
 registerHelpers(hbs);
 
 const app = express();
-const debug = config.get('debug');
+const serverConfig = config.get('server');
 
 /**
  * Set app host and port, views config
  */
-app.set('debug', debug);
-app.set('host', config.get('server:host'));
-app.set('port', config.get('server:port'));
+app.set('debug', serverConfig.debug);
+app.set('host', serverConfig.host);
+app.set('port', serverConfig.port);
 
-const viewsConfig = config.get('app:views');
 app.engine(
     'hbs',
     hbs.express4({
-        partialsDir: viewsConfig.partialsDir,
-        layoutsDir: viewsConfig.layoutsDir,
+        partialsDir: serverConfig.views.partialsDir,
+        layoutsDir: serverConfig.views.layoutsDir,
     })
 );
-app.set('views', viewsConfig.viewsDir);
-app.set('view engine', viewsConfig.engine);
+app.set('views', serverConfig.views.viewsDir);
+app.set('view engine', serverConfig.views.engine);
 
 /**
  * Set some global config
  */
-app.set('trust proxy', config.get('app:trust_proxy'));
-app.set('uploadsDir', config.get('app:uploadsDir'));
-app.set('staticDir', config.get('app:staticDir'));
+app.set('trust proxy', serverConfig.trust_proxy);
+app.set('uploadsDir', serverConfig.uploadsDir);
+app.set('staticDir', serverConfig.staticDir);
 
 /**
  * Add essential middlewares for express
  */
 app.use(
     morgan(config.get('logger:format'), {
-        stream: new LoggerStream(),
+        stream: new LoggerStream({
+            from: 'express_morgan',
+        }),
     })
 );
 app.use(
     session({
         resave: true,
         saveUninitialized: true,
-        secret: config.get('app:cookies_secret'),
+        secret: serverConfig.cookies_secret,
         store: new RedisStore({
             client: redisClient,
         }),
-        name: config.get('app:session_name'),
+        name: serverConfig.session_name,
     })
 );
-app.use(cookieParser(config.get('app:cookies_secret')));
+app.use(cookieParser(serverConfig.cookies_secret));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(flash());
@@ -101,14 +102,8 @@ app.disable('x-powered-by');
 /**
  * Static middlewares config
  */
-app.use(
-    config.get('app:routes:static'),
-    express.static(config.get('app:staticDir'))
-);
-app.use(
-    config.get('app:routes:uploads'),
-    express.static(config.get('app:uploadsDir'))
-);
+app.use(serverConfig.routes.static, express.static(serverConfig.staticDir));
+app.use(serverConfig.routes.uploads, express.static(serverConfig.uploadsDir));
 
 app.get('/', (req, res) => res.send('hello world!'));
 
@@ -135,10 +130,12 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
     // Check if current mode is debug, or error is come from server
     //  then logging the error stacktraces
-    if (debug || err.isServer) {
-        logger.error(err.stack);
+    if (serverConfig.debug || err.isServer) {
+        logger.error(err.stack, {
+            from: 'app_error_handler',
+        });
     }
-    if (!debug) {
+    if (!serverConfig.debug) {
         delete err.stack;
     }
 
@@ -165,7 +162,7 @@ app.use((err, req, res, next) => {
             if (renderErr) {
                 const mulErr = new Error('Multiple errors occurred.');
                 mulErr.stack = err.stack + '\n' + renderErr.stack;
-                if (!debug) {
+                if (!serverConfig.debug) {
                     delete mulErr.stack;
                 }
                 return next(mulErr);
