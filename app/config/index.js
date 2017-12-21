@@ -14,7 +14,7 @@ _private.validator = new Ajv().compile(require('./configSchema.json'));
  * - defaultsDir: defaults config directory
  * - customsDir: customs config directory
  */
-_private.loadNconf = function (options = {}) {
+_private.loadNconf = function(options = {}) {
     const nconf = new Nconf.Provider();
     const defaultsDir = options.defaultsDir || __dirname;
     const customsDir = options.customsDir || process.cwd();
@@ -30,12 +30,26 @@ _private.loadNconf = function (options = {}) {
     }
 
     // Load the defaults config include env config
-    nconf.file('defaults-env', join(defaultsDir, `config.${process.env.NODE_ENV !== 'production' ? 'dev' : 'prod'}.json`));
+    nconf.file(
+        'defaults-env',
+        join(
+            defaultsDir,
+            `config.${
+                process.env.NODE_ENV !== 'production' ? 'dev' : 'prod'
+            }.json`
+        )
+    );
     nconf.file('defaults', join(defaultsDir, 'defaults.config.json'));
 
     // Validating the loaded config, if not valid then throw the errors
     if (!this.validator(nconf.get())) {
-        throw new Error(`Validating config errors: ${JSON.stringify(this.validator.errors, null, 2)}`);
+        throw new Error(
+            `Validating config errors: ${JSON.stringify(
+                this.validator.errors,
+                null,
+                2
+            )}`
+        );
     }
 
     return nconf;

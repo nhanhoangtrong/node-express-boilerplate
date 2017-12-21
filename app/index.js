@@ -34,10 +34,13 @@ app.set('host', config.get('server:host'));
 app.set('port', config.get('server:port'));
 
 const viewsConfig = config.get('app:views');
-app.engine('hbs', hbs.express4({
-    partialsDir: viewsConfig.partialsDir,
-    layoutsDir: viewsConfig.layoutsDir,
-}));
+app.engine(
+    'hbs',
+    hbs.express4({
+        partialsDir: viewsConfig.partialsDir,
+        layoutsDir: viewsConfig.layoutsDir,
+    })
+);
 app.set('views', viewsConfig.viewsDir);
 app.set('view engine', viewsConfig.engine);
 
@@ -51,18 +54,22 @@ app.set('staticDir', config.get('app:staticDir'));
 /**
  * Add essential middlewares for express
  */
-app.use(morgan(config.get('logger:format'), {
-    stream: new LoggerStream(),
-}));
-app.use(session({
-    resave: true,
-    saveUninitialized: true,
-    secret: config.get('app:cookies_secret'),
-    store: new RedisStore({
-        client: redisClient,
-    }),
-    name: config.get('app:session_name'),
-}));
+app.use(
+    morgan(config.get('logger:format'), {
+        stream: new LoggerStream(),
+    })
+);
+app.use(
+    session({
+        resave: true,
+        saveUninitialized: true,
+        secret: config.get('app:cookies_secret'),
+        store: new RedisStore({
+            client: redisClient,
+        }),
+        name: config.get('app:session_name'),
+    })
+);
 app.use(cookieParser(config.get('app:cookies_secret')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -116,7 +123,7 @@ app.use((req, res, next) => {
 /**
  * App-level Request Errors Handler
  */
-app.use ((err, req, res, next) => {
+app.use((err, req, res, next) => {
     // Check if an error is bomified or not,
     // if not, throw an bad implementation to next handler
     if (!err.isBoom) {
@@ -148,21 +155,25 @@ app.use((err, req, res, next) => {
     }
 
     // Then render the error template and send back to client
-    return res.render('error', {
-        ...err,
-        stack: err.stack,
-    }, (renderErr, html) => {
-        if (renderErr) {
-            const mulErr = new Error('Multiple errors occurred.');
-            mulErr.stack = err.stack + '\n' + renderErr.stack;
-            if (!debug) {
-                delete mulErr.stack;
+    return res.render(
+        'error',
+        {
+            ...err,
+            stack: err.stack,
+        },
+        (renderErr, html) => {
+            if (renderErr) {
+                const mulErr = new Error('Multiple errors occurred.');
+                mulErr.stack = err.stack + '\n' + renderErr.stack;
+                if (!debug) {
+                    delete mulErr.stack;
+                }
+                return next(mulErr);
             }
-            return next(mulErr);
-        }
 
-        return res.send(html);
-    });
+            return res.send(html);
+        }
+    );
 });
 
 module.exports = app;

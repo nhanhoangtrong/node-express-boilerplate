@@ -15,15 +15,12 @@ function generateFormatters(config) {
             label({
                 label: {
                     name: config.get('name'),
-                    pid: process.pid
+                    pid: process.pid,
                 },
             }),
             prettyPrint()
         );
-    return combine(
-        splat(),
-        simple()
-    );
+    return combine(splat(), simple());
 }
 
 /**
@@ -35,7 +32,10 @@ function generateTransports(arr = []) {
         if (type === 'file') {
             return new transports.File({
                 level,
-                filename: filename.replace('[timestamp]', Date.now().toString()),
+                filename: filename.replace(
+                    '[timestamp]',
+                    Date.now().toString()
+                ),
             });
         } else {
             return new transports.Console({
@@ -50,7 +50,6 @@ const logger = createLogger({
     level: config.get('logger:level'),
     transports: generateTransports(config.get('logger:transports')),
 });
-
 
 exports.logger = logger;
 exports.LoggerStream = class InfoLoggerStream {
